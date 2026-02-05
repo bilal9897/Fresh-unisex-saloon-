@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Download } from 'lucide-react';
+import { X } from 'lucide-react';
 
 interface BeforeInstallPromptEvent extends Event {
     prompt: () => Promise<void>;
@@ -80,8 +80,8 @@ export function PWAInstallPrompt() {
                         </button>
 
                         <div className="flex items-start gap-3">
-                            <div className="w-10 h-10 bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 rounded-md">
-                                <Download size={18} className="text-primary" />
+                            <div className="w-10 h-10 bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 rounded-md overflow-hidden">
+                                <img src="/logo2.jpeg" alt="App Logo" className="w-full h-full object-cover" />
                             </div>
 
                             <div className="flex-1">
