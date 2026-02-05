@@ -1,16 +1,57 @@
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 
 const GOOGLE_REVIEW_URL = 'https://g.page/r/CS_Lg-PpHrxEEBM/review';
 
 export function GoogleReviewButton() {
+  const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+
+    const handleActivity = () => {
+      setIsVisible(true);
+      clearTimeout(timeout);
+
+      // Only hide after 3s on mobile
+      if (window.innerWidth < 768) {
+        timeout = setTimeout(() => {
+          setIsVisible(false);
+        }, 3000);
+      }
+    };
+
+    // Initial check
+    handleActivity();
+
+    window.addEventListener('touchstart', handleActivity);
+    window.addEventListener('touchmove', handleActivity);
+    window.addEventListener('touchend', handleActivity);
+    window.addEventListener('scroll', handleActivity);
+    window.addEventListener('click', handleActivity);
+
+    return () => {
+      clearTimeout(timeout);
+      window.removeEventListener('touchstart', handleActivity);
+      window.removeEventListener('touchmove', handleActivity);
+      window.removeEventListener('touchend', handleActivity);
+      window.removeEventListener('scroll', handleActivity);
+      window.removeEventListener('click', handleActivity);
+    };
+  }, []);
+
   return (
     <motion.a
       href={GOOGLE_REVIEW_URL}
       target="_blank"
       rel="noopener noreferrer"
       initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 2, duration: 0.5 }}
+      animate={{
+        opacity: isVisible ? 1 : 0,
+        y: isVisible ? 0 : 20,
+        pointerEvents: isVisible ? 'auto' : 'none'
+      }}
+      transition={{ duration: 0.3 }}
       className="fixed bottom-24 md:bottom-8 right-4 md:right-6 z-50"
       aria-label="Leave a Google Review"
     >

@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
 import { useRef } from 'react';
-import { MapPin, Phone, Clock, Instagram, MessageCircle } from 'lucide-react';
+import { Instagram, MessageCircle } from 'lucide-react';
 
 export function ContactSection() {
   const ref = useRef(null);
