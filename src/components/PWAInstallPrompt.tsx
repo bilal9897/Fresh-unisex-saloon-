@@ -81,7 +81,7 @@ export function PWAInstallPrompt() {
 
                         <div className="flex items-start gap-3">
                             <div className="w-10 h-10 bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 rounded-md overflow-hidden">
-                                <img src="/logo2.jpeg" alt="App Logo" className="w-full h-full object-cover" />
+                                <img src="/image.png" alt="App Logo" className="w-full h-full object-cover" />
                             </div>
 
                             <div className="flex-1">
