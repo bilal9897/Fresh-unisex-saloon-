@@ -5,9 +5,17 @@ const GOOGLE_REVIEW_URL = 'https://g.page/r/CS_Lg-PpHrxEEBM/review';
 
 export function GoogleReviewButton() {
   const [isVisible, setIsVisible] = useState(true);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
+
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 260);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
 
     const handleActivity = () => {
       setIsVisible(true);
@@ -32,6 +40,7 @@ export function GoogleReviewButton() {
 
     return () => {
       clearTimeout(timeout);
+      window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('touchstart', handleActivity);
       window.removeEventListener('touchmove', handleActivity);
       window.removeEventListener('touchend', handleActivity);
@@ -40,6 +49,8 @@ export function GoogleReviewButton() {
     };
   }, []);
 
+  const showButton = isVisible && isScrolled;
+
   return (
     <motion.a
       href={GOOGLE_REVIEW_URL}
@@ -47,15 +58,15 @@ export function GoogleReviewButton() {
       rel="noopener noreferrer"
       initial={{ opacity: 0, y: 20 }}
       animate={{
-        opacity: isVisible ? 1 : 0,
-        y: isVisible ? 0 : 20,
-        pointerEvents: isVisible ? 'auto' : 'none'
+        opacity: showButton ? 1 : 0,
+        y: showButton ? 0 : 20,
+        pointerEvents: showButton ? 'auto' : 'none'
       }}
       transition={{ duration: 0.3 }}
       className="fixed bottom-24 md:bottom-8 right-4 md:right-6 z-50"
       aria-label="Leave a Google Review"
     >
-      <span className="flex items-center gap-2 md:gap-3 px-3 py-2 md:px-5 md:py-3 bg-card/90 backdrop-blur-sm border border-border rounded-full shadow-md hover:shadow-lg hover:border-primary/50 transition-all duration-300 hover:scale-105">
+      <span className="flex items-center gap-2 md:gap-3 px-3.5 py-2 md:px-5 md:py-2.5 bg-white/10 hover:bg-white/20 active:bg-white/25 text-white/95 backdrop-blur-2xl border border-white/20 rounded-full shadow-[0_12px_32px_rgba(0,0,0,0.5)] transition-all duration-300 hover:scale-105">
         {/* Google G icon */}
         <svg className="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 24 24">
           <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />

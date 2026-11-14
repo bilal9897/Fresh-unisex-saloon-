@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
 import { useRef, useState, useCallback } from 'react';
-import gallery1 from '@/assets/gallery-1.png';
-import gallery2 from '@/assets/gallery-2.png';
-import gallery3 from '@/assets/gallery-3.png';
+import gallery1 from '@/assets/gallery-1.webp';
+import gallery2 from '@/assets/gallery-2.webp';
+import gallery3 from '@/assets/gallery-3.webp';
 
 interface TransformationProps {
   before: string;
@@ -49,7 +49,7 @@ function TransformationCard(props: TransformationProps) {
     >
       <div
         ref={containerRef}
-        className="relative aspect-[4/5] overflow-hidden cursor-ew-resize select-none"
+        className="relative aspect-[4/5] overflow-hidden rounded-[28px] border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.5)] cursor-ew-resize select-none"
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
@@ -81,22 +81,22 @@ function TransformationCard(props: TransformationProps) {
           className="absolute top-0 bottom-0 w-0.5 bg-primary z-10"
           style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)' }}
         >
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-primary rounded-full flex items-center justify-center shadow-lg">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-primary-foreground">
-              <path d="M8 4l-6 8 6 8M16 4l6 8-6 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-9 h-9 bg-primary rounded-full flex items-center justify-center shadow-lg">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="text-black">
+              <path d="M8 4l-6 8 6 8M16 4l6 8-6 8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
         </div>
 
-        <div className="absolute top-4 left-4 px-2 py-1 bg-background/80 backdrop-blur-sm">
-          <span className="font-sans text-[9px] uppercase tracking-ultra text-foreground">Before</span>
+        <div className="absolute top-4 left-4 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15">
+          <span className="font-sans text-[10px] uppercase tracking-wider text-white font-medium">Before</span>
         </div>
-        <div className="absolute top-4 right-4 px-2 py-1 bg-background/80 backdrop-blur-sm">
-          <span className="font-sans text-[9px] uppercase tracking-ultra text-foreground">After</span>
+        <div className="absolute top-4 right-4 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15">
+          <span className="font-sans text-[10px] uppercase tracking-wider text-primary font-medium">After</span>
         </div>
       </div>
 
-      <h3 className="font-serif text-lg text-foreground text-center">{title}</h3>
+      <h3 className="font-serif text-base text-foreground text-center font-medium">{title}</h3>
     </motion.div>
   );
 }
@@ -112,7 +112,7 @@ export function BeforeAfterSlider() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section className="py-24 lg:py-24 bg-background relative overflow-hidden">
+    <section className="py-10 sm:py-14 lg:py-20 bg-background relative overflow-hidden">
       <div className="absolute -left-20 top-1/2 -translate-y-1/2 font-serif text-[20rem] lg:text-[30rem] text-muted/30 select-none pointer-events-none leading-none">
         06
       </div>

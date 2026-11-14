@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sun, Moon } from 'lucide-react';
-import logo from '@/assets/logo.png';
+import logo from '@/assets/logo-clean.webp';
 
 const navLinks = [
   { href: '#about', label: 'About' },
@@ -16,6 +16,10 @@ export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
+    document.documentElement.classList.add('dark');
+  }, []);
+
+  useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 100);
     };
@@ -28,9 +32,9 @@ export function Navigation() {
     const newIsDark = !isDark;
     setIsDark(newIsDark);
     if (newIsDark) {
-      document.documentElement.classList.remove('light');
+      document.documentElement.classList.add('dark');
     } else {
-      document.documentElement.classList.add('light');
+      document.documentElement.classList.remove('dark');
     }
   };
 

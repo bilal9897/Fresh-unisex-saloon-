@@ -1,11 +1,10 @@
-import { motion } from 'framer-motion';
-import { useInView } from 'framer-motion';
-import { useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useRef } from 'react';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 
 const serviceCategories = [
   {
     title: 'Hair Cutting',
+    tag: 'Classic & Modern Styles',
     services: [
       { name: 'Hair Cutting', price: '₹150' },
       { name: 'Hair Cutting (Stylish)', price: '₹200' },
@@ -19,6 +18,7 @@ const serviceCategories = [
   },
   {
     title: 'Hair Colour',
+    tag: 'Premium Hair Shades',
     services: [
       { name: 'Garnier', price: '₹350' },
       { name: 'Keywest', price: '₹400' },
@@ -30,6 +30,7 @@ const serviceCategories = [
   },
   {
     title: 'Hair Treatment',
+    tag: 'Hair Care & Repair',
     services: [
       { name: 'Hair Spa', price: '₹800-1000' },
       { name: 'Hair Fall Treatment', price: '₹800' },
@@ -43,6 +44,7 @@ const serviceCategories = [
   },
   {
     title: 'Face Care',
+    tag: 'Skin Glow & D-Tan',
     services: [
       { name: 'Face Wash', price: '₹200' },
       { name: 'Face Scrub', price: '₹250' },
@@ -60,81 +62,126 @@ const serviceCategories = [
 
 export function ServicesSection() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const [selectedCategory, setSelectedCategory] = useState(serviceCategories[0].title);
+
+  const activeCategory =
+    serviceCategories.find((cat) => cat.title === selectedCategory) ||
+    serviceCategories[0];
 
   return (
-    <section id="services" className="py-16 lg:py-24 bg-card relative overflow-hidden">
-      {/* Background number */}
-      <div className="absolute -left-20 top-1/2 -translate-y-1/2 font-serif text-[20rem] lg:text-[30rem] text-muted/30 select-none pointer-events-none leading-none">
-        02
-      </div>
+    <section id="services" className="pt-10 pb-6 sm:py-14 lg:py-20 bg-background relative overflow-hidden">
+      {/* Background ambient lighting */}
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[350px] bg-primary/5 rounded-full blur-[140px] pointer-events-none" />
 
-      <div className="container mx-auto px-6 lg:px-16">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-16 relative z-10">
         {/* Header */}
         <motion.div
           ref={ref}
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
-          className="mb-10"
+          className="mb-8"
         >
           <p className="font-sans text-[10px] uppercase tracking-ultra text-primary line-accent">
-            Services
+            Services & Pricing
           </p>
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mt-6">
-            <h2 className="font-serif text-headline text-foreground">
+          <div className="mt-6">
+            <h2 className="font-serif text-3xl sm:text-headline text-foreground">
               Price <span className="text-primary italic font-normal">List</span>
             </h2>
-            <Link
-              to="/services"
-              className="group inline-flex items-center gap-3 font-sans text-[10px] uppercase tracking-ultra text-foreground hover:text-primary transition-colors duration-500"
-            >
-              <span className="w-8 h-px bg-primary group-hover:w-12 transition-all duration-500" />
-              View Price List
-            </Link>
+            <p className="font-sans text-xs sm:text-sm text-muted-foreground mt-1.5 max-w-md">
+              Transparent rates for haircutting, grooming, premium styling, and rejuvenating skin care.
+            </p>
+          </div>
+
+          {/* Category Filter - All 4 in ONE Single Row */}
+          <div className="mt-6 sm:mt-8 grid grid-cols-4 gap-1.5 sm:gap-2.5 max-w-2xl mx-auto">
+            {serviceCategories.map((c) => {
+              const isSelected = selectedCategory === c.title;
+              return (
+                <button
+                  key={c.title}
+                  type="button"
+                  onClick={() => setSelectedCategory(c.title)}
+                  className={`py-2 sm:py-2.5 px-1 sm:px-3 rounded-full text-[10px] sm:text-xs font-medium text-center transition-all active:scale-95 border truncate backdrop-blur-2xl ${
+                    isSelected
+                      ? 'bg-white text-black border-white shadow-md font-semibold'
+                      : 'bg-white/10 hover:bg-white/20 border-white/20 text-white/90 hover:text-white shadow-[0_4px_16px_rgba(0,0,0,0.2)]'
+                  }`}
+                  title={c.title}
+                >
+                  {c.title}
+                </button>
+              );
+            })}
           </div>
         </motion.div>
 
-        {/* Services Grid - Compact */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
-          {serviceCategories.map((category, catIndex) => (
+        {/* iOS-Inspired Grouped Price Card */}
+        <div className="max-w-2xl mx-auto">
+          <AnimatePresence mode="wait">
             <motion.div
-              key={category.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: catIndex * 0.1 }}
-              className="bg-background/50 border border-border p-4"
+              key={activeCategory.title}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.3 }}
+              className="relative bg-card border border-border rounded-[28px] p-6 sm:p-7 shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:border-border/80 transition-all duration-300 flex flex-col justify-between"
             >
-              <h3 className="font-serif text-base text-primary mb-3 pb-2 border-b border-border/50">
-                {category.title}
-              </h3>
-              <div className="space-y-1.5">
-                {category.services.map((service) => (
-                  <div
-                    key={service.name}
-                    className="flex justify-between items-baseline gap-2 text-[11px]"
-                  >
-                    <span className="font-sans text-foreground/80 truncate">
-                      {service.name}
-                    </span>
-                    <span className="font-sans text-primary whitespace-nowrap">
-                      {service.price}
-                    </span>
+              <div>
+                {/* iOS Card Header */}
+                <div className="flex items-center justify-between pb-4 border-b border-border/60 mb-2">
+                  <div>
+                    <h3 className="font-serif text-xl sm:text-2xl font-semibold text-foreground tracking-tight">
+                      {activeCategory.title}
+                    </h3>
+                    <span className="text-xs text-muted-foreground">{activeCategory.tag}</span>
                   </div>
-                ))}
+                  <span className="text-xs font-medium px-3 py-1 rounded-full bg-secondary text-muted-foreground border border-border">
+                    {activeCategory.services.length} items
+                  </span>
+                </div>
+
+                {/* iOS Inset Grouped Service List */}
+                <div className="divide-y divide-border/40">
+                  {activeCategory.services.map((service) => (
+                    <div
+                      key={service.name}
+                      className="flex items-center justify-between py-3 px-2 hover:bg-muted/30 rounded-xl transition-colors"
+                    >
+                      <span className="font-sans text-xs sm:text-sm text-foreground/90">
+                        {service.name}
+                      </span>
+                      <span className="font-sans text-xs sm:text-sm font-semibold text-foreground tracking-tight">
+                        {service.price}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* iOS Glassy CTA Button */}
+              <div className="mt-6 pt-4 border-t border-border/60">
+                <a
+                  href="#book"
+                  className="w-full py-3.5 px-4 rounded-2xl bg-white hover:bg-neutral-200 active:bg-neutral-300 border border-transparent text-black text-xs sm:text-sm font-semibold text-center block transition-all active:scale-[0.98] shadow-lg shadow-white/5"
+                >
+                  Book {activeCategory.title} Service
+                </a>
               </div>
             </motion.div>
-          ))}
+          </AnimatePresence>
         </div>
 
-        {/* Note */}
+        {/* Bottom Note */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.8, delay: 0.5 }}
-          className="font-sans text-[10px] text-muted-foreground mt-6 text-center"
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="font-sans text-[11px] text-muted-foreground mt-4 sm:mt-6 text-center"
         >
-          * Prices may vary. Package deals available.
+          * Prices are subject to customization. Package deals and custom groom packages available upon request.
         </motion.p>
       </div>
     </section>

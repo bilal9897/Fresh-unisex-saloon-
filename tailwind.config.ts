@@ -16,6 +16,8 @@ export default {
       fontFamily: {
         serif: ['Playfair Display', 'Georgia', 'serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        cursive: ['"Pinyon Script"', '"Great Vibes"', 'cursive'],
+        script: ['"Great Vibes"', '"Alex Brush"', 'cursive'],
       },
       colors: {
         border: "hsl(var(--border))",

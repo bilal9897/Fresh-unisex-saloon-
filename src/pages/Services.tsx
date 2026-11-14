@@ -89,22 +89,29 @@ function ServiceCategory({ category, services, index }: { category: string; serv
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 40 }}
+      initial={{ opacity: 0, y: 30 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.8, delay: index * 0.1 }}
-      className="mb-16"
+      transition={{ duration: 0.6, delay: index * 0.08 }}
+      className="bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-[28px] p-6 shadow-[0_16px_40px_rgba(0,0,0,0.45)] mb-8"
     >
-      <h3 className="font-serif text-2xl text-foreground mb-6 pb-4 border-b border-border">
-        {category}
-      </h3>
-      <div className="space-y-4">
+      <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-2">
+        <h3 className="font-serif text-xl text-white font-medium">
+          {category}
+        </h3>
+        <span className="text-xs text-white/50 px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10">
+          {services.length} items
+        </span>
+      </div>
+      <div className="divide-y divide-white/5">
         {services.map((service) => (
           <div
             key={service.name}
-            className="flex justify-between items-center py-3 border-b border-border/50 hover:bg-muted/20 transition-colors duration-300 px-2 -mx-2"
+            className="flex justify-between items-center py-3.5 px-2 hover:bg-white/[0.02] rounded-xl transition-colors"
           >
-            <span className="font-sans text-base text-foreground">{service.name}</span>
-            <span className="font-sans text-base text-primary">{service.price}</span>
+            <span className="font-sans text-sm text-white/90">{service.name}</span>
+            <span className="font-sans text-sm font-semibold text-white tracking-tight">
+              {service.price}
+            </span>
           </div>
         ))}
       </div>
@@ -182,23 +189,35 @@ export default function Services() {
             {packages.map((pkg, index) => (
               <motion.div
                 key={pkg.name}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 24 }}
                 animate={isPackagesInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.8, delay: index * 0.1 }}
-                className="relative p-8 border border-border hover:border-primary/50 transition-all duration-500 group"
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="relative p-6 sm:p-7 bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-[28px] shadow-[0_16px_40px_rgba(0,0,0,0.45)] hover:border-white/25 transition-all duration-300 group flex flex-col justify-between"
               >
-                <span className="absolute top-4 right-4 font-sans text-[10px] uppercase tracking-wider text-primary bg-accent px-2 py-1">
-                  {pkg.savings}
-                </span>
-                <h3 className="font-serif text-xl text-foreground mb-2 group-hover:text-primary transition-colors">
-                  {pkg.name}
-                </h3>
-                <p className="font-sans text-sm text-muted-foreground mb-6">
-                  {pkg.description}
-                </p>
-                <div className="flex items-baseline gap-3">
-                  <span className="font-serif text-3xl text-foreground">{pkg.price}</span>
-                  <span className="font-sans text-sm text-muted-foreground line-through">{pkg.originalPrice}</span>
+                <div>
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <h3 className="font-serif text-xl text-white font-medium group-hover:text-primary transition-colors">
+                      {pkg.name}
+                    </h3>
+                    <span className="font-sans text-[10px] font-semibold text-white bg-white/10 border border-white/20 px-2.5 py-1 rounded-full whitespace-nowrap">
+                      {pkg.savings}
+                    </span>
+                  </div>
+                  <p className="font-sans text-xs text-white/70 mb-6 leading-relaxed">
+                    {pkg.description}
+                  </p>
+                </div>
+                <div className="pt-4 border-t border-white/10 flex items-baseline justify-between">
+                  <div className="flex items-baseline gap-2.5">
+                    <span className="font-serif text-2xl font-bold text-white">{pkg.price}</span>
+                    <span className="font-sans text-xs text-white/40 line-through">{pkg.originalPrice}</span>
+                  </div>
+                  <a
+                    href="/#book"
+                    className="py-1.5 px-3.5 rounded-full bg-white/10 hover:bg-white/15 active:bg-white/20 border border-white/15 text-white text-xs font-medium backdrop-blur-xl transition-all"
+                  >
+                    Select
+                  </a>
                 </div>
               </motion.div>
             ))}
