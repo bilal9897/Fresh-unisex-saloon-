@@ -87,7 +87,7 @@ export function ContactSection() {
                   <span>WhatsApp</span>
                 </a>
                 <a
-                  href="https://instagram.com/fresh_unisex_saloon"
+                  href="https://www.instagram.com/aazam_fresh__salon?exln=aG0yYm95ZXNlMzRr"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1 py-3 px-4 rounded-full bg-white/10 hover:bg-white/20 active:bg-white/25 border border-white/20 text-white/95 text-xs font-medium text-center flex items-center justify-center gap-2 backdrop-blur-2xl shadow-[0_8px_24px_rgba(0,0,0,0.3)] transition-all active:scale-95"

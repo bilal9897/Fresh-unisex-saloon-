@@ -1,6 +1,7 @@
 import { Instagram, Phone, MapPin, Clock } from 'lucide-react';
 
-const INSTAGRAM_HANDLE = 'fresh_unisex_saloon';
+const INSTAGRAM_HANDLE = 'aazam_fresh__salon';
+const INSTAGRAM_URL = 'https://www.instagram.com/aazam_fresh__salon?exln=aG0yYm95ZXNlMzRr';
 const PHONE_NUMBER = '+918197925360';
 
 export function Footer() {
@@ -32,7 +33,7 @@ export function Footer() {
             <h4 className="font-sans text-[10px] uppercase tracking-ultra text-primary mb-6">Follow Us</h4>
             <div className="flex flex-col gap-4">
               <a 
-                href={`https://instagram.com/${INSTAGRAM_HANDLE}`}
+                href={INSTAGRAM_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 font-sans text-sm text-muted-foreground hover:text-foreground transition-colors group"
