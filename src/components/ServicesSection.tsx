@@ -64,6 +64,8 @@ export function ServicesSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
+  const touchStartXRef = useRef<number | null>(null);
+  const touchStartYRef = useRef<number | null>(null);
 
   const goToNextCategory = () => {
     setCurrentCategoryIndex((prev) => (prev + 1) % serviceCategories.length);
@@ -73,6 +75,29 @@ export function ServicesSection() {
     setCurrentCategoryIndex(
       (prev) => (prev - 1 + serviceCategories.length) % serviceCategories.length
     );
+  };
+
+  // Only trigger on intentional horizontal swipe, never on vertical page scroll
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartXRef.current = e.touches[0].clientX;
+    touchStartYRef.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartXRef.current === null || touchStartYRef.current === null) return;
+    const deltaX = e.changedTouches[0].clientX - touchStartXRef.current;
+    const deltaY = e.changedTouches[0].clientY - touchStartYRef.current;
+
+    // Strict horizontal swipe check: >65px horizontal AND >2.5x vertical movement
+    if (Math.abs(deltaX) > 65 && Math.abs(deltaX) > Math.abs(deltaY) * 2.5) {
+      if (deltaX < 0) {
+        goToNextCategory();
+      } else {
+        goToPrevCategory();
+      }
+    }
+    touchStartXRef.current = null;
+    touchStartYRef.current = null;
   };
 
   return (
@@ -124,26 +149,20 @@ export function ServicesSection() {
           </div>
         </motion.div>
 
-        {/* iOS-Inspired Grouped Price Card - Continuous Butter-Smooth Sliding Track */}
-        <div className="max-w-2xl mx-auto overflow-hidden rounded-[28px]">
+        {/* iOS-Inspired Grouped Price Card - Sliding Track with deliberate horizontal swipe */}
+        <div
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          className="max-w-2xl mx-auto overflow-hidden rounded-[28px]"
+        >
           <motion.div
-            className="flex touch-pan-y cursor-grab active:cursor-grabbing"
+            className="flex"
             animate={{ x: `-${currentCategoryIndex * 100}%` }}
             transition={{
               type: 'spring',
               stiffness: 280,
               damping: 28,
               mass: 0.8,
-            }}
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.2}
-            onDragEnd={(_e, info) => {
-              if (info.offset.x < -35 || info.velocity.x < -200) {
-                goToNextCategory();
-              } else if (info.offset.x > 35 || info.velocity.x > 200) {
-                goToPrevCategory();
-              }
             }}
           >
             {serviceCategories.map((cat) => (
