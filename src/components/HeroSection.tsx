@@ -38,7 +38,7 @@ export function HeroSection() {
       </div>
 
       {/* ================= EDITORIAL HERO SECTION (Mobile) ================= */}
-      <div className="relative z-20 md:hidden h-full flex flex-col justify-between px-5 pt-[38vh] sm:pt-[36vh] pb-8 pointer-events-none">
+      <div className="relative z-20 md:hidden h-full flex flex-col justify-between px-5 pt-[27vh] sm:pt-[25vh] pb-8 pointer-events-none">
         {/* Content pushed cleanly onto the center of the dark leather wall */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
@@ -96,7 +96,7 @@ export function HeroSection() {
       </div>
 
       {/* ================= DESKTOP HERO CONTENT ================= */}
-      <div className="hidden md:flex relative z-20 h-full flex-col justify-center pt-12 lg:pt-16 px-6 lg:px-24 xl:px-32 2xl:px-40">
+      <div className="hidden md:flex relative z-20 h-full flex-col justify-center -mt-6 lg:-mt-10 pt-8 lg:pt-10 px-6 lg:px-24 xl:px-32 2xl:px-40">
         <div className="max-w-xl">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
