@@ -27,15 +27,15 @@
   <meta property="og:title" content="Fresh Saloon | Best Unisex Salon in Mangalore | Fresh Salon" />
   <meta property="og:description"
     content="Fresh Saloon (Fresh Salon) is a top-rated premium unisex salon in Balmatta, Mangalore, offering professional haircuts, beard styling, hair spa, keratin treatments, facials, grooming, and beauty services for men and women. Book your appointment at Fresh Unisex Saloon today." />
-  <meta property="og:image" content="https://freshsaloon.in/og-image.png" />
-  <meta property="og:image:secure_url" content="https://freshsaloon.in/og-image.png" />
-  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image" content="https://freshsaloon.in/og-image.jpg" />
+  <meta property="og:image:secure_url" content="https://freshsaloon.in/og-image.jpg" />
+  <meta property="og:image:type" content="image/jpeg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="Best Unisex Salon in Mangalore - Fresh Saloon / Fresh Salon" />
+  <meta property="og:image:alt" content="Fresh Saloon | Best Unisex Salon in Mangalore" />
   <meta property="og:locale" content="en_IN" />
   <meta property="og:site_name" content="Fresh Unisex Saloon" />
-  <link rel="image_src" href="https://freshsaloon.in/og-image.png" />
+  <link rel="image_src" href="https://freshsaloon.in/og-image.jpg" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
@@ -43,7 +43,27 @@
   <meta name="twitter:title" content="Fresh Saloon | Best Unisex Salon in Mangalore | Fresh Salon" />
   <meta name="twitter:description"
     content="Fresh Saloon (Fresh Salon) is a top-rated premium unisex salon in Balmatta, Mangalore, offering professional haircuts, beard styling, hair spa, keratin treatments, facials, grooming, and beauty services for men and women. Book your appointment at Fresh Unisex Saloon today." />
-  <meta name="twitter:image" content="https://freshsaloon.in/og-image.png" />
+  <meta name="twitter:image" content="https://freshsaloon.in/og-image.jpg" />
+
+  <script>
+    if (typeof window !== 'undefined' && window.location.origin && !window.location.origin.includes('freshsaloon.in')) {
+      try {
+        var origin = window.location.origin;
+        var ogImg = document.querySelector('meta[property="og:image"]');
+        var ogImgSec = document.querySelector('meta[property="og:image:secure_url"]');
+        var twImg = document.querySelector('meta[name="twitter:image"]');
+        var imgLink = document.querySelector('link[rel="image_src"]');
+        var ogUrl = document.querySelector('meta[property="og:url"]');
+        var twUrl = document.querySelector('meta[name="twitter:url"]');
+        if (ogImg) ogImg.setAttribute('content', origin + '/og-image.jpg');
+        if (ogImgSec) ogImgSec.setAttribute('content', origin + '/og-image.jpg');
+        if (twImg) twImg.setAttribute('content', origin + '/og-image.jpg');
+        if (imgLink) imgLink.setAttribute('href', origin + '/og-image.jpg');
+        if (ogUrl) ogUrl.setAttribute('content', origin);
+        if (twUrl) twUrl.setAttribute('content', origin);
+      } catch (e) {}
+    }
+  </script>
 
   <!-- Geo Tags for Local SEO -->
   <meta name="geo.region" content="IN-KA" />

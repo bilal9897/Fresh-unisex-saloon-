@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, X, ChevronLeft, ChevronRight, Maximize2, Play, Film, Image as ImageIcon } from 'lucide-react';
@@ -10,11 +10,6 @@ import newGallery3 from '@/assets/new-gallery-3.webp';
 import gallery1 from '@/assets/gallery-1.webp';
 import gallery2 from '@/assets/gallery-2.webp';
 import gallery3 from '@/assets/gallery-3.webp';
-import heroImage from '@/assets/hero-image.webp';
-import dayImage from '@/assets/day.webp';
-import pImage from '@/assets/p.webp';
-import imageAsset from '@/assets/image.webp';
-import mobileHero from '@/assets/mobile-hero.webp';
 
 interface PhotoItem {
   type: 'photo';
@@ -39,11 +34,6 @@ const galleryPhotos: PhotoItem[] = [
   { type: 'photo', src: gallery1, title: 'Precision Hair Styling', category: 'Styling' },
   { type: 'photo', src: gallery2, title: 'Beard Sculpting & Trim', category: 'Beard' },
   { type: 'photo', src: gallery3, title: 'Colour & Texture Treatment', category: 'Hair' },
-  { type: 'photo', src: heroImage, title: 'Salon Stations & Ambiance', category: 'Ambiance' },
-  { type: 'photo', src: pImage, title: 'Master Barber Grooming', category: 'Grooming' },
-  { type: 'photo', src: dayImage, title: 'Styling Floor View', category: 'Ambiance' },
-  { type: 'photo', src: imageAsset, title: 'Signature Cut & Finish', category: 'Haircut' },
-  { type: 'photo', src: mobileHero, title: 'Reception & Lounge', category: 'Lounge' },
 ];
 
 const galleryVideos: VideoItem[] = [
@@ -59,6 +49,43 @@ export default function Gallery() {
   const [activeTab, setActiveTab] = useState<'all' | 'photos' | 'videos'>('all');
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null);
   const [selectedVideoUrl, setSelectedVideoUrl] = useState<string | null>(null);
+  const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
+  const touchStartXRef = useRef<number | null>(null);
+  const touchStartYRef = useRef<number | null>(null);
+
+  const goToNextPhoto = () => {
+    setSwipeDirection('left');
+    setSelectedPhotoIndex((prev) => (prev !== null ? (prev + 1) % galleryPhotos.length : null));
+  };
+
+  const goToPrevPhoto = () => {
+    setSwipeDirection('right');
+    setSelectedPhotoIndex((prev) =>
+      prev !== null ? (prev - 1 + galleryPhotos.length) % galleryPhotos.length : null
+    );
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartXRef.current = e.touches[0].clientX;
+    touchStartYRef.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartXRef.current === null || touchStartYRef.current === null) return;
+    const deltaX = e.changedTouches[0].clientX - touchStartXRef.current;
+    const deltaY = e.changedTouches[0].clientY - touchStartYRef.current;
+
+    // Only trigger if horizontal swipe is prominent and larger than vertical swipe
+    if (Math.abs(deltaX) > 35 && Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
+      if (deltaX < 0) {
+        goToNextPhoto();
+      } else {
+        goToPrevPhoto();
+      }
+    }
+    touchStartXRef.current = null;
+    touchStartYRef.current = null;
+  };
 
   const displayedItems: GalleryItem[] =
     activeTab === 'all'
@@ -73,12 +100,10 @@ export default function Gallery() {
       if (selectedPhotoIndex !== null) {
         if (e.key === 'Escape') setSelectedPhotoIndex(null);
         if (e.key === 'ArrowRight') {
-          setSelectedPhotoIndex((prev) => (prev !== null ? (prev + 1) % galleryPhotos.length : null));
+          goToNextPhoto();
         }
         if (e.key === 'ArrowLeft') {
-          setSelectedPhotoIndex((prev) =>
-            prev !== null ? (prev - 1 + galleryPhotos.length) % galleryPhotos.length : null
-          );
+          goToPrevPhoto();
         }
       }
       if (selectedVideoUrl !== null && e.key === 'Escape') {
@@ -276,7 +301,11 @@ export default function Gallery() {
       {/* ================= FULL SCREEN PHOTO LIGHTBOX MODAL ================= */}
       <AnimatePresence>
         {selectedPhotoIndex !== null && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/95 backdrop-blur-2xl">
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/95 backdrop-blur-2xl touch-pan-y select-none"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
             {/* Click backdrop to close */}
             <div
               className="absolute inset-0"
@@ -304,19 +333,38 @@ export default function Gallery() {
               </button>
             </div>
 
-            {/* Full Screen Image */}
+            {/* Full Screen Image with touch & mouse drag swiping */}
             <motion.div
               key={selectedPhotoIndex}
-              initial={{ opacity: 0, scale: 0.94 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.94 }}
-              transition={{ duration: 0.25 }}
-              className="relative z-10 max-h-[82vh] max-w-[95vw] sm:max-w-[85vw] flex items-center justify-center pointer-events-auto"
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.35}
+              onDragEnd={(_e, info) => {
+                if (info.offset.x < -35 || info.velocity.x < -250) {
+                  goToNextPhoto();
+                } else if (info.offset.x > 35 || info.velocity.x > 250) {
+                  goToPrevPhoto();
+                }
+              }}
+              initial={{
+                opacity: 0,
+                x: swipeDirection === 'left' ? 60 : swipeDirection === 'right' ? -60 : 0,
+                scale: 0.96,
+              }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{
+                opacity: 0,
+                x: swipeDirection === 'left' ? -60 : swipeDirection === 'right' ? 60 : 0,
+                scale: 0.96,
+              }}
+              transition={{ type: 'spring', damping: 26, stiffness: 320 }}
+              className="relative z-10 max-h-[78vh] max-w-[95vw] sm:max-w-[85vw] flex items-center justify-center pointer-events-auto cursor-grab active:cursor-grabbing touch-pan-y"
             >
               <img
                 src={galleryPhotos[selectedPhotoIndex].src}
                 alt={galleryPhotos[selectedPhotoIndex].title}
-                className="max-h-[80vh] w-auto max-w-full object-contain rounded-2xl sm:rounded-3xl border border-white/15 shadow-[0_24px_70px_rgba(0,0,0,0.9)]"
+                draggable={false}
+                className="max-h-[74vh] w-auto max-w-full object-contain rounded-2xl sm:rounded-3xl border border-white/15 shadow-[0_24px_70px_rgba(0,0,0,0.9)] pointer-events-none select-none"
               />
             </motion.div>
 
@@ -325,9 +373,7 @@ export default function Gallery() {
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                setSelectedPhotoIndex(
-                  (selectedPhotoIndex - 1 + galleryPhotos.length) % galleryPhotos.length
-                );
+                goToPrevPhoto();
               }}
               className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 active:bg-white/25 border border-white/20 text-white flex items-center justify-center backdrop-blur-xl active:scale-90 transition-all shadow-lg"
               aria-label="Previous photo"
@@ -340,15 +386,39 @@ export default function Gallery() {
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                setSelectedPhotoIndex(
-                  (selectedPhotoIndex + 1) % galleryPhotos.length
-                );
+                goToNextPhoto();
               }}
               className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 active:bg-white/25 border border-white/20 text-white flex items-center justify-center backdrop-blur-xl active:scale-90 transition-all shadow-lg"
               aria-label="Next photo"
             >
               <ChevronRight size={22} />
             </button>
+
+            {/* Bottom Dots & Swipe Hint */}
+            <div className="absolute bottom-5 inset-x-0 z-20 flex flex-col items-center gap-2 pointer-events-none">
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/10 pointer-events-auto">
+                {galleryPhotos.map((_, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSwipeDirection(idx > selectedPhotoIndex ? 'left' : 'right');
+                      setSelectedPhotoIndex(idx);
+                    }}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      selectedPhotoIndex === idx
+                        ? 'w-5 bg-primary'
+                        : 'w-1.5 bg-white/30 hover:bg-white/60'
+                    }`}
+                    aria-label={`Go to photo ${idx + 1}`}
+                  />
+                ))}
+              </div>
+              <p className="text-[11px] text-white/50 font-sans tracking-wider uppercase sm:hidden">
+                Swipe left / right to browse
+              </p>
+            </div>
           </div>
         )}
       </AnimatePresence>
