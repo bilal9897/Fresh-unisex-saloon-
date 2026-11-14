@@ -34,69 +34,73 @@ export function TestimonialsSection() {
   const isInView = useInView(ref, { once: true, margin: '-40px' });
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const currentIndexRef = useRef(0);
-  const lastInteractionRef = useRef(0);
+  const isInteractingRef = useRef(false);
+  const interactionTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const touchStartXRef = useRef<number | null>(null);
 
-  // Keep currentIndexRef synchronized
-  currentIndexRef.current = activeIndex;
-
-  const scrollToSlide = (index: number) => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-    const cards = container.children;
-    const targetCard = cards[index] as HTMLElement;
-    if (targetCard) {
-      const targetLeft =
-        targetCard.offsetLeft -
-        (container.clientWidth - targetCard.clientWidth) / 2;
-
-      container.scrollTo({
-        left: Math.max(0, targetLeft),
-        behavior: 'smooth',
-      });
-      setActiveIndex(index);
-    }
+  const handleInteraction = () => {
+    isInteractingRef.current = true;
+    if (interactionTimerRef.current) clearTimeout(interactionTimerRef.current);
+    interactionTimerRef.current = setTimeout(() => {
+      isInteractingRef.current = false;
+    }, 3800);
   };
 
   const scrollNext = () => {
-    const next = (currentIndexRef.current + 1) % testimonials.length;
-    lastInteractionRef.current = Date.now();
-    scrollToSlide(next);
+    handleInteraction();
+    setActiveIndex((prev) => (prev + 1) % testimonials.length);
   };
 
   const scrollPrev = () => {
-    const prev = (currentIndexRef.current - 1 + testimonials.length) % testimonials.length;
-    lastInteractionRef.current = Date.now();
-    scrollToSlide(prev);
+    handleInteraction();
+    setActiveIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
   };
 
-  // Robust Auto-swipe left timer (resumes automatically 3s after user interaction)
+  // Robust Auto-rotation timer (every 3.5s, auto-resumes after pause)
   useEffect(() => {
     const interval = setInterval(() => {
-      // Pause briefly if user recently touched or dragged
-      if (Date.now() - lastInteractionRef.current < 3000) {
-        return;
+      if (!isInteractingRef.current) {
+        setActiveIndex((prev) => (prev + 1) % testimonials.length);
       }
-
-      const next = (currentIndexRef.current + 1) % testimonials.length;
-      scrollToSlide(next);
-    }, 3200);
+    }, 3500);
 
     return () => clearInterval(interval);
   }, []);
 
-  const handleInteraction = () => {
-    lastInteractionRef.current = Date.now();
-  };
-
-  // Real-time scroll listener to update active index
-  const handleScroll = () => {
+  // Smoothly scroll the container to the active slide whenever activeIndex changes
+  useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
-    const { scrollLeft, clientWidth } = container;
-    const cardWidth = clientWidth * 0.84 || 300;
-    const index = Math.round(scrollLeft / cardWidth);
-    setActiveIndex(Math.min(Math.max(index, 0), testimonials.length - 1));
+    const cards = container.children;
+    const targetCard = cards[activeIndex] as HTMLElement;
+    if (targetCard) {
+      const scrollPosition =
+        targetCard.offsetLeft -
+        (container.clientWidth - targetCard.clientWidth) / 2;
+
+      container.scrollTo({
+        left: Math.max(0, scrollPosition),
+        behavior: 'smooth',
+      });
+    }
+  }, [activeIndex]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    handleInteraction();
+    touchStartXRef.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartXRef.current === null) return;
+    const deltaX = e.changedTouches[0].clientX - touchStartXRef.current;
+    if (Math.abs(deltaX) > 40) {
+      if (deltaX < 0) {
+        scrollNext();
+      } else {
+        scrollPrev();
+      }
+    }
+    touchStartXRef.current = null;
   };
 
   return (
@@ -145,14 +149,13 @@ export function TestimonialsSection() {
           {/* Auto-Swiping Reviews Carousel - Hidden Scrollbar & Clean Display */}
           <div
             onMouseEnter={handleInteraction}
-            onTouchStart={handleInteraction}
-            onTouchMove={handleInteraction}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
             className="relative"
           >
             <div
               ref={scrollContainerRef}
-              onScroll={handleScroll}
-              className="relative flex gap-4 overflow-x-auto snap-x snap-mandatory no-scrollbar scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden pb-1 -mx-4 px-4 sm:mx-0 sm:px-0"
+              className="relative flex gap-4 overflow-x-auto snap-x snap-mandatory no-scrollbar scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden pb-1 -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth"
             >
               {testimonials.map((testimonial, index) => (
                 <div
@@ -176,6 +179,26 @@ export function TestimonialsSection() {
                     </p>
                   </div>
                 </div>
+              ))}
+            </div>
+
+            {/* Pagination Dots for Mobile & Desktop */}
+            <div className="flex items-center justify-center gap-1.5 mt-4">
+              {testimonials.map((_, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => {
+                    handleInteraction();
+                    setActiveIndex(idx);
+                  }}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    activeIndex === idx
+                      ? 'w-5 bg-primary'
+                      : 'w-1.5 bg-white/20 hover:bg-white/40'
+                  }`}
+                  aria-label={`Go to review ${idx + 1}`}
+                />
               ))}
             </div>
           </div>

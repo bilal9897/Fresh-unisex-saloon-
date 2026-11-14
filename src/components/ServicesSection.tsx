@@ -63,11 +63,17 @@ const serviceCategories = [
 export function ServicesSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
-  const [selectedCategory, setSelectedCategory] = useState(serviceCategories[0].title);
+  const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
 
-  const activeCategory =
-    serviceCategories.find((cat) => cat.title === selectedCategory) ||
-    serviceCategories[0];
+  const goToNextCategory = () => {
+    setCurrentCategoryIndex((prev) => (prev + 1) % serviceCategories.length);
+  };
+
+  const goToPrevCategory = () => {
+    setCurrentCategoryIndex(
+      (prev) => (prev - 1 + serviceCategories.length) % serviceCategories.length
+    );
+  };
 
   return (
     <section id="services" className="pt-10 pb-6 sm:py-14 lg:py-20 bg-background relative overflow-hidden">
@@ -97,13 +103,13 @@ export function ServicesSection() {
 
           {/* Category Filter - All 4 in ONE Single Row */}
           <div className="mt-6 sm:mt-8 grid grid-cols-4 gap-1.5 sm:gap-2.5 max-w-2xl mx-auto">
-            {serviceCategories.map((c) => {
-              const isSelected = selectedCategory === c.title;
+            {serviceCategories.map((c, idx) => {
+              const isSelected = currentCategoryIndex === idx;
               return (
                 <button
                   key={c.title}
                   type="button"
-                  onClick={() => setSelectedCategory(c.title)}
+                  onClick={() => setCurrentCategoryIndex(idx)}
                   className={`py-2 sm:py-2.5 px-1 sm:px-3 rounded-full text-[10px] sm:text-xs font-medium text-center transition-all active:scale-95 border truncate backdrop-blur-2xl ${
                     isSelected
                       ? 'bg-white text-black border-white shadow-md font-semibold'
@@ -118,60 +124,99 @@ export function ServicesSection() {
           </div>
         </motion.div>
 
-        {/* iOS-Inspired Grouped Price Card */}
-        <div className="max-w-2xl mx-auto">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeCategory.title}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.3 }}
-              className="relative bg-card border border-border rounded-[28px] p-6 sm:p-7 shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:border-border/80 transition-all duration-300 flex flex-col justify-between"
-            >
-              <div>
-                {/* iOS Card Header */}
-                <div className="flex items-center justify-between pb-4 border-b border-border/60 mb-2">
+        {/* iOS-Inspired Grouped Price Card - Continuous Butter-Smooth Sliding Track */}
+        <div className="max-w-2xl mx-auto overflow-hidden rounded-[28px]">
+          <motion.div
+            className="flex touch-pan-y cursor-grab active:cursor-grabbing"
+            animate={{ x: `-${currentCategoryIndex * 100}%` }}
+            transition={{
+              type: 'spring',
+              stiffness: 280,
+              damping: 28,
+              mass: 0.8,
+            }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.2}
+            onDragEnd={(_e, info) => {
+              if (info.offset.x < -35 || info.velocity.x < -200) {
+                goToNextCategory();
+              } else if (info.offset.x > 35 || info.velocity.x > 200) {
+                goToPrevCategory();
+              }
+            }}
+          >
+            {serviceCategories.map((cat) => (
+              <div
+                key={cat.title}
+                className="w-full shrink-0 px-0.5 select-none"
+              >
+                <div className="bg-card border border-border rounded-[28px] p-5 sm:p-7 shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:border-border/80 transition-colors flex flex-col justify-between min-h-[460px]">
                   <div>
-                    <h3 className="font-serif text-xl sm:text-2xl font-semibold text-foreground tracking-tight">
-                      {activeCategory.title}
-                    </h3>
-                    <span className="text-xs text-muted-foreground">{activeCategory.tag}</span>
-                  </div>
-                  <span className="text-xs font-medium px-3 py-1 rounded-full bg-secondary text-muted-foreground border border-border">
-                    {activeCategory.services.length} items
-                  </span>
-                </div>
-
-                {/* iOS Inset Grouped Service List */}
-                <div className="divide-y divide-border/40">
-                  {activeCategory.services.map((service) => (
-                    <div
-                      key={service.name}
-                      className="flex items-center justify-between py-3 px-2 hover:bg-muted/30 rounded-xl transition-colors"
-                    >
-                      <span className="font-sans text-xs sm:text-sm text-foreground/90">
-                        {service.name}
-                      </span>
-                      <span className="font-sans text-xs sm:text-sm font-semibold text-foreground tracking-tight">
-                        {service.price}
+                    {/* iOS Card Header */}
+                    <div className="flex items-center justify-between pb-4 border-b border-border/60 mb-2">
+                      <div>
+                        <h3 className="font-serif text-xl sm:text-2xl font-semibold text-foreground tracking-tight">
+                          {cat.title}
+                        </h3>
+                        <span className="text-xs text-muted-foreground">{cat.tag}</span>
+                      </div>
+                      <span className="text-xs font-medium px-3 py-1 rounded-full bg-secondary text-muted-foreground border border-border">
+                        {cat.services.length} items
                       </span>
                     </div>
-                  ))}
+
+                    {/* iOS Inset Grouped Service List */}
+                    <div className="divide-y divide-border/40">
+                      {cat.services.map((service) => (
+                        <div
+                          key={service.name}
+                          className="flex items-center justify-between py-3 px-2 hover:bg-muted/30 rounded-xl transition-colors"
+                        >
+                          <span className="font-sans text-xs sm:text-sm text-foreground/90">
+                            {service.name}
+                          </span>
+                          <span className="font-sans text-xs sm:text-sm font-semibold text-foreground tracking-tight">
+                            {service.price}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* iOS Glassy CTA Button */}
+                  <div className="mt-6 pt-4 border-t border-border/60">
+                    <a
+                      href="#book"
+                      className="w-full py-3.5 px-4 rounded-2xl bg-white hover:bg-neutral-200 active:bg-neutral-300 border border-transparent text-black text-xs sm:text-sm font-semibold text-center block transition-all active:scale-[0.98] shadow-lg shadow-white/5"
+                    >
+                      Book {cat.title} Service
+                    </a>
+                  </div>
                 </div>
               </div>
+            ))}
+          </motion.div>
+        </div>
 
-              {/* iOS Glassy CTA Button */}
-              <div className="mt-6 pt-4 border-t border-border/60">
-                <a
-                  href="#book"
-                  className="w-full py-3.5 px-4 rounded-2xl bg-white hover:bg-neutral-200 active:bg-neutral-300 border border-transparent text-black text-xs sm:text-sm font-semibold text-center block transition-all active:scale-[0.98] shadow-lg shadow-white/5"
-                >
-                  Book {activeCategory.title} Service
-                </a>
-              </div>
-            </motion.div>
-          </AnimatePresence>
+        {/* Swipe indicator dots & subtle mobile hint */}
+        <div className="flex flex-col items-center gap-1.5 mt-4 sm:hidden">
+          <div className="flex items-center gap-1.5">
+            {serviceCategories.map((c, idx) => (
+              <button
+                key={c.title}
+                type="button"
+                onClick={() => setCurrentCategoryIndex(idx)}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  currentCategoryIndex === idx ? 'w-5 bg-primary' : 'w-1.5 bg-white/20'
+                }`}
+                aria-label={`Go to ${c.title}`}
+              />
+            ))}
+          </div>
+          <p className="text-[10px] text-muted-foreground/70 uppercase tracking-widest font-sans">
+            Swipe left / right for more categories
+          </p>
         </div>
 
         {/* Bottom Note */}

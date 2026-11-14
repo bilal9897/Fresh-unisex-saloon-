@@ -142,8 +142,8 @@ export function GallerySection() {
                 </>
               )}
 
-              {/* Bottom gradient with title */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent flex items-end p-4 pointer-events-none">
+              {/* Bottom gradient with title (hidden on mobile for pure work photo view) */}
+              <div className="hidden sm:flex absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent items-end p-4 pointer-events-none">
                 <span className="text-white text-xs sm:text-sm font-medium drop-shadow-md">
                   {item.title}
                 </span>

@@ -140,8 +140,8 @@ export default function Gallery() {
               <span>Back</span>
             </Link>
 
-            <span className="font-serif text-lg sm:text-xl text-foreground font-semibold">
-              Fresh<span className="text-primary italic font-normal">.</span>
+            <span className="font-serif text-base sm:text-lg text-foreground font-semibold tracking-tight">
+              Work <span className="text-primary italic font-normal">Gallery</span>
             </span>
 
             <a
@@ -155,22 +155,24 @@ export default function Gallery() {
       </header>
 
       {/* Main Content */}
-      <main className="pt-24 sm:pt-28 pb-16 lg:pb-24">
+      <main className="pt-16 sm:pt-28 pb-16 lg:pb-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-16">
-          {/* Page Heading */}
-          <div className="text-center max-w-xl mx-auto mb-6 sm:mb-8">
-            <p className="font-sans text-[10px] uppercase tracking-ultra text-primary line-accent justify-center">
-              Our Portfolio
-            </p>
-            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-foreground mt-4 tracking-tight">
-              Work <span className="text-primary italic font-normal">Gallery</span>
-            </h1>
-            <p className="font-sans text-xs sm:text-sm text-muted-foreground mt-2 leading-relaxed">
-              Explore our master haircuts, precision beard sculpts, video reels, and salon ambiance. Tap any item to view in full screen.
-            </p>
+          {/* Page Heading (hidden on mobile since it's already in the top header) */}
+          <div className="text-center max-w-xl mx-auto mb-3 sm:mb-8">
+            <div className="hidden sm:block">
+              <p className="font-sans text-[10px] uppercase tracking-ultra text-primary line-accent justify-center">
+                Our Portfolio
+              </p>
+              <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-foreground mt-4 tracking-tight">
+                Work <span className="text-primary italic font-normal">Gallery</span>
+              </h1>
+              <p className="font-sans text-xs sm:text-sm text-muted-foreground mt-2 leading-relaxed">
+                Explore our master haircuts, precision beard sculpts, video reels, and salon ambiance. Tap any item to view in full screen.
+              </p>
+            </div>
 
             {/* Filter Tabs */}
-            <div className="flex items-center justify-center gap-2 mt-6">
+            <div className="flex items-center justify-center gap-2 mt-2 sm:mt-6">
               <button
                 type="button"
                 onClick={() => setActiveTab('all')}
@@ -232,8 +234,8 @@ export default function Gallery() {
                       loading="lazy"
                     />
 
-                    {/* Bottom title gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent flex items-end p-3 sm:p-4">
+                    {/* Bottom title gradient (hidden on mobile for clean full image view) */}
+                    <div className="hidden sm:flex absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent items-end p-3 sm:p-4">
                       <span className="text-white text-xs sm:text-sm font-medium drop-shadow-md">
                         {item.title}
                       </span>
@@ -285,8 +287,8 @@ export default function Gallery() {
                     </div>
                   </div>
 
-                  {/* Bottom title gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent flex items-end p-3 sm:p-4 pointer-events-none">
+                  {/* Bottom title gradient (hidden on mobile for clean full video view) */}
+                  <div className="hidden sm:flex absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent items-end p-3 sm:p-4 pointer-events-none">
                     <span className="text-white text-xs sm:text-sm font-medium drop-shadow-md">
                       {item.title}
                     </span>

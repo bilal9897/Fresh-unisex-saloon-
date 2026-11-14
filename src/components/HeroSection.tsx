@@ -38,7 +38,7 @@ export function HeroSection() {
       </div>
 
       {/* ================= EDITORIAL HERO SECTION (Mobile) ================= */}
-      <div className="relative z-20 md:hidden h-full flex flex-col justify-between px-5 pt-[27vh] sm:pt-[25vh] pb-8 pointer-events-none">
+      <div className="relative z-20 md:hidden h-full flex flex-col justify-between px-5 pt-[31vh] sm:pt-[29vh] pb-8 pointer-events-none">
         {/* Content pushed cleanly onto the center of the dark leather wall */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
@@ -46,8 +46,8 @@ export function HeroSection() {
           transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
           className="w-full max-w-sm mx-auto text-left pointer-events-auto"
         >
-          {/* Micro Tag with Silver and Dark Brown */}
-          <div className="flex items-center gap-2 mb-1.5">
+          {/* Micro Tag with Silver and Dark Brown (hidden on mobile) */}
+          <div className="hidden sm:flex items-center gap-2 mb-1.5">
             <span className="w-5 h-px bg-[#8C532B]" />
             <span className="text-[11px] font-sans font-medium uppercase tracking-[0.25em] text-zinc-300 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
               Look Good <span className="text-[#C68A57] font-semibold">• Feel Fresh</span>
